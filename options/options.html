@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gmail AI Summarizer — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1><span class="sparkle" aria-hidden="true">&#10022;</span> Gmail AI Summarizer</h1>
+      <p class="subtitle">Configure your Google account connection, AI provider, and topics.</p>
+    </header>
+
+    <form id="settings-form">
+      <section class="card">
+        <h2>Gmail connection</h2>
+        <p class="help">Grants read-only access so the extension can look at your important emails.</p>
+        <div class="row align-center">
+          <span id="auth-status" class="status-pill status-disconnected">Not connected</span>
+          <button type="button" id="connect-btn" class="btn btn-primary">Connect Gmail</button>
+          <button type="button" id="disconnect-btn" class="btn btn-secondary" hidden>Disconnect</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>AI provider</h2>
+        <p class="help">
+          Your API key is stored locally in this browser (<code>chrome.storage.local</code>) and is sent
+          directly from your machine to the provider you choose below. It never passes through any
+          third-party server run by this extension.
+        </p>
+
+        <label class="field">
+          <span>Provider</span>
+          <select id="provider-select">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>API key</span>
+          <div class="input-with-button">
+            <input type="password" id="api-key-input" autocomplete="off" placeholder="sk-..." />
+            <button type="button" id="toggle-key-visibility" class="btn btn-secondary btn-small">Show</button>
+          </div>
+        </label>
+
+        <label class="field anthropic-only">
+          <span>Anthropic model</span>
+          <input type="text" id="anthropic-model-input" placeholder="claude-haiku-4-5-20251001" />
+        </label>
+
+        <label class="field openai-only hidden">
+          <span>OpenAI model</span>
+          <input type="text" id="openai-model-input" placeholder="gpt-4o-mini" />
+        </label>
+
+        <div class="row align-center">
+          <button type="button" id="test-key-btn" class="btn btn-secondary">Test connection</button>
+          <span id="test-key-result" class="status-text"></span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Topics</h2>
+        <p class="help">
+          Each topic becomes a tab in the summary panel. Give the AI a short description of what
+          belongs in each one — e.g. <strong>Swimming</strong>: "swim practice times, meet schedules,
+          pool closures", or <strong>Work</strong>: "meetings, deadlines, project updates". Emails that
+          don't match any topic land in an automatic "Other" tab.
+        </p>
+        <div id="topics-list" class="topics-list"></div>
+        <button type="button" id="add-topic-btn" class="btn btn-secondary">+ Add topic</button>
+      </section>
+
+      <section class="card">
+        <h2>Email scan settings</h2>
+        <label class="field">
+          <span>Gmail search query</span>
+          <input type="text" id="gmail-query-input" placeholder="in:inbox (is:important OR is:starred) newer_than:3d" />
+        </label>
+        <p class="help">Uses normal <a href="https://support.google.com/mail/answer/7190" target="_blank" rel="noopener noreferrer">Gmail search syntax</a> to decide which emails count as "important".</p>
+
+        <div class="row">
+          <label class="field field-inline">
+            <span>Max emails per scan</span>
+            <input type="number" id="max-emails-input" min="1" max="50" />
+          </label>
+          <label class="field field-inline">
+            <span>Refresh every (minutes)</span>
+            <input type="number" id="refresh-interval-input" min="5" max="180" />
+          </label>
+        </div>
+
+        <div class="row align-center">
+          <button type="button" id="refresh-now-btn" class="btn btn-secondary">Refresh now</button>
+          <span id="refresh-now-result" class="status-text"></span>
+        </div>
+      </section>
+
+      <div class="save-bar">
+        <button type="submit" id="save-btn" class="btn btn-primary">Save settings</button>
+        <span id="save-status" class="status-text"></span>
+      </div>
+    </form>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

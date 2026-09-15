@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gmail AI Summarizer</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup">
+    <header>
+      <span class="sparkle" aria-hidden="true">&#10022;</span>
+      <h1>Gmail AI Summarizer</h1>
+    </header>
+
+    <div class="row align-center">
+      <span id="auth-status" class="status-pill status-disconnected">Not connected</span>
+      <span id="meta" class="meta"></span>
+    </div>
+
+    <div id="connect-block" class="block hidden">
+      <p class="help">Connect your Gmail account to start getting AI summaries.</p>
+      <button type="button" id="connect-btn" class="btn btn-primary btn-full">Connect Gmail</button>
+    </div>
+
+    <div id="topics-block" class="block hidden">
+      <ul id="topics-summary" class="topics-summary"></ul>
+    </div>
+
+    <div id="error-block" class="block hidden">
+      <p class="help error-text" id="error-text"></p>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="refresh-btn" class="btn btn-secondary">Refresh</button>
+      <button type="button" id="open-gmail-btn" class="btn btn-secondary">Open Gmail</button>
+      <button type="button" id="settings-btn" class="btn btn-secondary">Settings</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

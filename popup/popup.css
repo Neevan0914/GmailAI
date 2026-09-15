@@ -1,0 +1,114 @@
+:root {
+  color-scheme: light dark;
+  --indigo: #4f46e5;
+  --border: #dadce0;
+  --text: #202124;
+  --muted: #5f6368;
+  --bg: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  width: 300px;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.popup { padding: 16px; }
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+header h1 { font-size: 14px; margin: 0; }
+
+.sparkle { color: var(--indigo); font-size: 16px; }
+
+.row { display: flex; gap: 8px; }
+.row.align-center { align-items: center; }
+
+.status-pill {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.status-connected { background: #e6f4ea; color: #137333; }
+.status-disconnected { background: #fce8e6; color: #c5221f; }
+
+.meta { font-size: 11.5px; color: var(--muted); }
+
+.block { margin-top: 12px; }
+.hidden { display: none !important; }
+
+.help { font-size: 12.5px; color: var(--muted); line-height: 1.4; margin: 0 0 8px; }
+
+.error-text { color: #c5221f; }
+
+.topics-summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.topics-summary li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--topic-color, var(--indigo));
+  border-radius: 8px;
+}
+
+.topics-summary .count {
+  font-weight: 700;
+  color: var(--indigo);
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  flex: 1 1 auto;
+}
+
+.btn-primary { background: var(--indigo); color: #fff; }
+.btn-secondary { background: #fff; color: var(--indigo); border: 1px solid #c5cae9; }
+.btn-secondary:hover { background: #eef1ff; }
+.btn-full { width: 100%; }
+
+.actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --border: #3c4043;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --bg: #2d2e31;
+  }
+  .btn-secondary { background: #2d2e31; }
+  .btn-secondary:hover { background: #3c3d5c; }
+  .status-connected { background: #0f3d24; color: #81c995; }
+  .status-disconnected { background: #4c1310; color: #f28b82; }
+}
