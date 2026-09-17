@@ -1,8 +1,10 @@
 // AI provider clients: turns a batch of emails into per-topic summaries.
 // Anthropic is the default provider (uses tool-use for structured output);
-// OpenAI is offered as an alternative via JSON-mode chat completions.
+// OpenAI and Gemini are offered as alternatives, each via their own
+// JSON-schema-constrained structured output mode.
 
 const ANTHROPIC_VERSION = '2023-06-01';
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 const BODY_CHARS_FOR_PROMPT = 1200;
 
 function buildSystemPrompt(topics) {
@@ -33,6 +35,28 @@ function trimForPrompt(email) {
 
 function validTopicIds(topics) {
   return new Set([...topics.map((t) => t.id), 'other']);
+}
+
+function buildResultsSchema(topics) {
+  return {
+    type: 'object',
+    properties: {
+      results: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            topic: { type: 'string', description: `One of: ${[...validTopicIds(topics)].join(', ')}` },
+            summary: { type: 'string' },
+            priority: { type: 'string', enum: ['high', 'normal', 'low'] },
+          },
+          required: ['id', 'topic', 'summary', 'priority'],
+        },
+      },
+    },
+    required: ['results'],
+  };
 }
 
 function normalizeResults(results, emails, topics) {
@@ -75,25 +99,7 @@ async function callAnthropic(emails, topics, settings) {
   const tool = {
     name: 'categorize_emails',
     description: 'Classify each email into a topic and produce a short, specific summary.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        results: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              topic: { type: 'string', description: `One of: ${[...validTopicIds(topics)].join(', ')}` },
-              summary: { type: 'string' },
-              priority: { type: 'string', enum: ['high', 'normal', 'low'] },
-            },
-            required: ['id', 'topic', 'summary', 'priority'],
-          },
-        },
-      },
-      required: ['results'],
-    },
+    input_schema: buildResultsSchema(topics),
   };
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -169,10 +175,56 @@ async function callOpenAI(emails, topics, settings) {
   return normalizeResults(parsed.results, emails, topics);
 }
 
+async function callGemini(emails, topics, settings) {
+  if (!settings.apiKey) {
+    throw new Error('Missing Gemini API key. Add it in the extension options.');
+  }
+
+  const res = await fetch(`${GEMINI_API_BASE}/interactions`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-goog-api-key': settings.apiKey,
+    },
+    body: JSON.stringify({
+      model: settings.geminiModel || 'gemini-3.8-flash',
+      system_instruction: buildSystemPrompt(topics),
+      input: JSON.stringify({ emails: emails.map(trimForPrompt) }),
+      response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: buildResultsSchema(topics),
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Gemini API error ${res.status}: ${text.slice(0, 300)}`);
+  }
+
+  const data = await res.json();
+  const steps = data.steps || [];
+  const modelStep = [...steps].reverse().find((s) => s.type === 'model_output');
+  const textPart = modelStep?.content?.find((c) => c.type === 'text');
+  if (!textPart?.text) throw new Error('AI response did not include structured results.');
+
+  let parsed;
+  try {
+    parsed = JSON.parse(textPart.text);
+  } catch {
+    throw new Error('Could not parse the AI JSON response.');
+  }
+  return normalizeResults(parsed.results, emails, topics);
+}
+
 export async function categorizeAndSummarize(emails, settings) {
   if (emails.length === 0) return [];
   if (settings.provider === 'openai') {
     return callOpenAI(emails, settings.topics, settings);
+  }
+  if (settings.provider === 'gemini') {
+    return callGemini(emails, settings.topics, settings);
   }
   return callAnthropic(emails, settings.topics, settings);
 }
@@ -183,6 +235,14 @@ export async function testApiKey(settings) {
       headers: { Authorization: `Bearer ${settings.apiKey}` },
     });
     if (!res.ok) throw new Error(`OpenAI key check failed (HTTP ${res.status}).`);
+    return true;
+  }
+
+  if (settings.provider === 'gemini') {
+    const res = await fetch(`${GEMINI_API_BASE}/models`, {
+      headers: { 'x-goog-api-key': settings.apiKey },
+    });
+    if (!res.ok) throw new Error(`Gemini key check failed (HTTP ${res.status}).`);
     return true;
   }
 

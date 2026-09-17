@@ -1,6 +1,7 @@
 const FALLBACK = {
   model: 'claude-haiku-4-5-20251001',
   openaiModel: 'gpt-4o-mini',
+  geminiModel: 'gemini-3.8-flash',
   gmailQuery: 'in:inbox (is:important OR is:starred) newer_than:3d',
   maxEmails: 20,
   refreshIntervalMinutes: 15,
@@ -60,6 +61,8 @@ function renderProvider() {
   document.getElementById('anthropic-model-input').placeholder = FALLBACK.model;
   document.getElementById('openai-model-input').value = settings.openaiModel || '';
   document.getElementById('openai-model-input').placeholder = FALLBACK.openaiModel;
+  document.getElementById('gemini-model-input').value = settings.geminiModel || '';
+  document.getElementById('gemini-model-input').placeholder = FALLBACK.geminiModel;
   toggleProviderFields();
 }
 
@@ -67,6 +70,7 @@ function toggleProviderFields() {
   const provider = document.getElementById('provider-select').value;
   document.querySelector('.anthropic-only').classList.toggle('hidden', provider !== 'anthropic');
   document.querySelector('.openai-only').classList.toggle('hidden', provider !== 'openai');
+  document.querySelector('.gemini-only').classList.toggle('hidden', provider !== 'gemini');
 }
 
 function renderTopics() {
@@ -216,6 +220,8 @@ function wireEvents() {
     state.settings.model = document.getElementById('anthropic-model-input').value.trim() || FALLBACK.model;
     state.settings.openaiModel =
       document.getElementById('openai-model-input').value.trim() || FALLBACK.openaiModel;
+    state.settings.geminiModel =
+      document.getElementById('gemini-model-input').value.trim() || FALLBACK.geminiModel;
     state.settings.gmailQuery = document.getElementById('gmail-query-input').value.trim() || FALLBACK.gmailQuery;
     state.settings.maxEmails = clamp(
       parseInt(document.getElementById('max-emails-input').value, 10) || FALLBACK.maxEmails,

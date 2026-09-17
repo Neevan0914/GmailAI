@@ -19,7 +19,7 @@ above the Compose button.
   periodically so the panel is already warm when you open it, plus a manual
   refresh button.
 - **Bring your own AI key.** Supports Anthropic (Claude) by default, with
-  OpenAI as an alternative provider.
+  OpenAI and Google (Gemini) as alternative providers.
 - **Read-only Gmail access.** Uses the `gmail.readonly` OAuth scope — the
   extension can never send, delete, or modify your mail.
 
@@ -30,7 +30,7 @@ content/content.js        → injects the button + panel into Gmail's page
 content/panel-ui.js        → the floating panel UI (Shadow DOM, isolated styles)
 background/background.js   → service worker: message router + alarm scheduler
 background/gmail.js         → OAuth + Gmail REST API (list/get messages, MIME parsing)
-background/ai.js            → calls Anthropic/OpenAI, returns {topic, summary, priority} per email
+background/ai.js            → calls Anthropic/OpenAI/Gemini, returns {topic, summary, priority} per email
 background/storage.js       → settings/cache schema + chrome.storage helpers
 options/                    → settings page (connect Gmail, API key, topics)
 popup/                      → toolbar quick-status popup
@@ -83,6 +83,10 @@ extension ID. This is a one-time setup:
   [console.anthropic.com](https://console.anthropic.com/).
 - **OpenAI (alternative):** create a key at
   [platform.openai.com](https://platform.openai.com/).
+- **Gemini (alternative):** create a key at
+  [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Uses
+  Google's Interactions API (`v1beta/interactions`) with `gemini-3.8-flash`
+  by default.
 
 ### 4. Configure the extension
 
@@ -108,7 +112,7 @@ thread.
 
 - Your AI API key is stored in `chrome.storage.local` (this browser
   profile only, never synced) and is sent directly from your machine to
-  Anthropic/OpenAI. Nothing passes through a third-party server.
+  Anthropic/OpenAI/Google. Nothing passes through a third-party server.
 - Because the key lives in a browser extension, anyone with local access to
   this Chrome profile could in principle extract it. This is fine for
   personal use, but **do not publish a build of this extension with your
@@ -122,7 +126,7 @@ thread.
 - **Icons:** replace the placeholder files in `icons/` (16/48/128 px PNG).
 - **Default topics:** edit `DEFAULT_TOPICS` in `background/storage.js`.
 - **Models:** change the defaults in `background/storage.js`
-  (`model` / `openaiModel`) or override per-provider in Settings.
+  (`model` / `openaiModel` / `geminiModel`) or override per-provider in Settings.
 - **What counts as "important":** edit the Gmail search query in Settings —
   any valid [Gmail search operator](https://support.google.com/mail/answer/7190)
   works, e.g. `in:inbox label:important OR from:boss@company.com`.

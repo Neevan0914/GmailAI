@@ -8,7 +8,8 @@
     "https://mail.google.com/*",
     "https://www.googleapis.com/*",
     "https://api.anthropic.com/*",
-    "https://api.openai.com/*"
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*"
   ],
   "background": {
     "service_worker": "background/background.js",

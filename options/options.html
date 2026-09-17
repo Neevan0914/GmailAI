@@ -36,6 +36,7 @@
           <select id="provider-select">
             <option value="anthropic">Anthropic (Claude)</option>
             <option value="openai">OpenAI</option>
+            <option value="gemini">Google (Gemini)</option>
           </select>
         </label>
 
@@ -55,6 +56,11 @@
         <label class="field openai-only hidden">
           <span>OpenAI model</span>
           <input type="text" id="openai-model-input" placeholder="gpt-4o-mini" />
+        </label>
+
+        <label class="field gemini-only hidden">
+          <span>Gemini model</span>
+          <input type="text" id="gemini-model-input" placeholder="gemini-3.8-flash" />
         </label>
 
         <div class="row align-center">
