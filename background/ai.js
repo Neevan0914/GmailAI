@@ -187,7 +187,7 @@ async function callGemini(emails, topics, settings) {
       'x-goog-api-key': settings.apiKey,
     },
     body: JSON.stringify({
-      model: settings.geminiModel || 'gemini-3.8-flash',
+      model: settings.geminiModel || 'gemini-3.5-flash-lite',
       system_instruction: buildSystemPrompt(topics),
       input: JSON.stringify({ emails: emails.map(trimForPrompt) }),
       response_format: {

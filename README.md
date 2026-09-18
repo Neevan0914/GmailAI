@@ -85,8 +85,11 @@ extension ID. This is a one-time setup:
   [platform.openai.com](https://platform.openai.com/).
 - **Gemini (alternative):** create a key at
   [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Uses
-  Google's Interactions API (`v1beta/interactions`) with `gemini-3.8-flash`
-  by default.
+  Google's Interactions API (`v1beta/interactions`) with
+  `gemini-3.5-flash-lite` by default — a fast, low-cost tier that's a good
+  fit for short classification/summary calls. `gemini-3.8-flash` (the
+  larger flagship model) works too if you set it in Settings, though as a
+  brand-new release it may return `503` "high demand" errors under load.
 
 ### 4. Configure the extension
 

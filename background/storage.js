@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS = {
   apiKey: '',
   model: 'claude-haiku-4-5-20251001',
   openaiModel: 'gpt-4o-mini',
-  geminiModel: 'gemini-3.8-flash',
+  geminiModel: 'gemini-3.5-flash-lite',
   topics: DEFAULT_TOPICS,
   gmailQuery: 'in:inbox (is:important OR is:starred) newer_than:3d',
   maxEmails: 20,
